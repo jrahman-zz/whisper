@@ -1,6 +1,8 @@
 
 #include "itc.h"
 
+#include "BinStamp.h"
+
 namespace whisper { namespace timestamp {
 
 /**
@@ -26,11 +28,30 @@ class Timestamp {
          * Move constructor
          */
         Timestamp(const Timestamp&& r)
-            : stamp_(r.stamp_) {
+            : stamp_(r.stamp_),
+            isInited_(r.isInited_) {
             r.stamp_ = nullptr;
+            r.isInited_ = false;
         }
 
 
+        /**
+         * Restore a timestamp from encoded binary format stored in string
+         */
+        explicit Timestamp(const std::string& encoded)
+            : isInited_(false),
+            stamp_(nullptr) {
+            BinStamp binStamp(encoded);
+            buildFromBinStamp(std::move(binStamp));
+        }
+
+        explicit Timestamp(BinStamp&& binStamp)
+            : isInited_(false),
+            stamp_(nullptr) {
+            buildFromBinStamp(std::move(binStamp));
+        }
+
+        
         ~Timestamp() {
             if (stamp_) {
                 free(stamp_);
@@ -108,12 +129,22 @@ class Timestamp {
 
     private:
 
+        void buildFromBinStamp(BinStamp&& binStamp) {
+            if (binStamp.stamp_) {
+                stamp_ = decodeStamp(binStamp.stamp_);
+                isInited_ = true;
+            }
+        }
+
         // ITC based timestamp
         stamp* stamp_;
 
         // Track if we've been started as a seed, or the product of a fork, etc
         bool isInited_;
-}
+
+    // Make BinStamp our friend so it can serialize us
+    friend class BinStamp;
+};
 
 }} // ::whisper::timestamp
 

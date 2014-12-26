@@ -103,6 +103,9 @@ class Timestamp {
             itc_event(stamp_, stamp_);
         }
 
+    
+    // TODO, need to create a serialiable version, suitable for thrift use
+
     private:
 
         // ITC based timestamp

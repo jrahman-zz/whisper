@@ -1,6 +1,6 @@
-namespace whisper rpc
+namespace cpp2 whisper.rpc
 
-enum WhisperStatus {
+enum Status {
     DOWN_TO_UP = 8,
     UP_TO_DOWN = 4,
     UP = 2,
@@ -32,7 +32,7 @@ struct Node {
     1: string guid,
 
     // Communications interface the node can be reached via
-    2: NodeInterface interface,
+    2: NodeInterface nodeInterface,
 
     // The current known status, as far as this node is concerned
     4: Status currentStatus,
@@ -41,19 +41,19 @@ struct Node {
     8: i64 timestamp
 }
 
-struct GossipState {
+struct State {
     
-    // Sender of this GossipState
+    // Sender of this State
     1: Node sender,
 
-    // Set of known live GossipNodes
-    4: set<Node> liveNodes,
+    // Set of known live Nodes
+    2: set<Node> liveNodes,
 
-    // Set of potentially dead GossipNodes based on purely local information
-    8: set<Node> suspectNodes,
+    // Set of potentially dead Nodes based on purely local information
+    4: set<Node> suspectNodes,
 
-    // Set of agreed upon dead GossipNodes based on multi-node consensus
-    16: set<Node> deadNodes,
+    // Set of agreed upon dead Nodes based on multi-node consensus
+    8: set<Node> deadNodes,
 }
 
 // Generic service representing a server that participates in the Gossip protcol
